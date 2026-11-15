@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>خطة هدير نبيل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0b; --side:#0d0d0f; --card:#141417; --card2:#1a1a1e; --field:#0f0f12;
+  --line:#2a2620; --line2:#3a3428;
+  --gold:#d4af37; --gold2:#f0d78a; --gold3:#8c7330; --goldbg:rgba(212,175,55,.10);
+  --text:#f2ede2; --muted:#9b958a; --dim:#6e695f; --danger:#e06b5f;
+  --r:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:radial-gradient(1100px 520px at 0% -10%,rgba(212,175,55,.07),transparent 60%),var(--bg);
+  color:var(--text);font-family:Cairo,system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
+  min-height:100vh;line-height:1.6;font-size:15px;
+}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.en{font-family:"Playfair Display",Georgia,serif}
+
+/* ---------- layout ---------- */
+.app{display:grid;grid-template-columns:290px minmax(0,1fr);min-height:100vh}
+aside{
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  background:linear-gradient(180deg,#0f0f11,#09090a);
+  border-inline-end:1px solid var(--line);padding:22px 14px 18px;
+  scrollbar-width:thin;scrollbar-color:#2a2620 transparent;
+}
+main{min-width:0;padding:26px 34px 60px}
+.wrap{max-width:1180px;margin:0 auto}
+
+/* ---------- brand ---------- */
+.brand{display:flex;align-items:center;gap:12px;padding:4px 8px 20px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.mono{
+  width:50px;height:50px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:radial-gradient(circle at 30% 25%,#2a2416,#0c0b08 70%);
+  border:1.5px solid var(--gold);box-shadow:0 0 0 4px rgba(212,175,55,.08),0 6px 20px rgba(212,175,55,.15);
+  font-family:"Playfair Display",serif;font-weight:700;font-size:19px;letter-spacing:.5px;
+  background-clip:padding-box;color:var(--gold2);
+}
+.brand b{display:block;font-family:"Playfair Display",serif;font-size:19px;color:var(--gold2);letter-spacing:.3px;direction:ltr;text-align:right}
+.brand small{color:var(--muted);font-size:12.5px}
+
+/* ---------- nav ---------- */
+.nav-sec{margin:14px 0 4px;padding:0 10px;font-size:12px;color:var(--gold);letter-spacing:.5px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+.nav-grp{margin:10px 0 2px;padding:0 12px;font-size:11.5px;color:var(--dim);font-weight:600}
+.nav a{
+  display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;color:#d9d3c6;
+  border-inline-start:3px solid transparent;transition:background .15s,color .15s;font-size:14px;
+}
+.nav a:hover{background:rgba(255,255,255,.03);color:var(--text)}
+.nav a.active{background:var(--goldbg);color:var(--gold2);border-inline-start-color:var(--gold)}
+.nav .ic{width:22px;text-align:center;color:var(--gold);flex:none}
+.nav .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav .pc{font-size:11.5px;color:var(--muted);direction:ltr}
+.nav a.active .pc{color:var(--gold2)}
+.tag-soon{font-size:10.5px;color:var(--gold3);border:1px solid var(--gold3);border-radius:99px;padding:0 8px;font-weight:600}
+.side-foot{margin-top:22px;padding:14px 10px 0;border-top:1px solid var(--line);font-size:11.5px;color:var(--dim);text-align:center}
+
+/* ---------- topbar ---------- */
+.topbar{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.hamb{display:none;background:var(--card);border:1px solid var(--line);color:var(--gold2);border-radius:10px;width:42px;height:42px;font-size:20px;cursor:pointer}
+.crumbs{color:var(--muted);font-size:13px}
+.crumbs b{color:var(--gold2);font-weight:600}
+
+/* ---------- headings ---------- */
+.h1{font-size:28px;font-weight:800;margin:0 0 4px;line-height:1.3}
+.h1 .g{color:var(--gold2)}
+.sub{color:var(--muted);margin:0}
+.h2{font-size:17px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}
+.h2::before{content:"";width:4px;height:18px;border-radius:2px;background:linear-gradient(var(--gold2),var(--gold3))}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:30px 0 14px;flex-wrap:wrap}
+
+/* ---------- cards ---------- */
+.card{background:linear-gradient(180deg,var(--card),#111113);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:22px}
+.kpi{position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;inset-inline:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.kpi .lbl{color:var(--muted);font-size:13px}
+.kpi .val{font-size:30px;font-weight:800;color:var(--gold2);direction:ltr;text-align:right;line-height:1.3;margin-top:4px}
+.kpi .val small{font-size:15px;color:var(--muted);font-weight:600}
+.kpi .hint{font-size:12px;color:var(--dim)}
+.kpi.warn .val{color:var(--danger)}
+
+.grid-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.icard{display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color .2s,transform .2s}
+.icard:hover{border-color:var(--gold3);transform:translateY(-2px)}
+.icard .top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.code{
+  font-family:"Playfair Display",serif;font-weight:700;color:var(--gold2);font-size:20px;direction:ltr;letter-spacing:.3px;
+}
+.icard .tt{font-weight:700;font-size:15px;line-height:1.4}
+.icard .en{color:var(--muted);font-size:12.5px;direction:ltr;text-align:right}
+.icard .meta{display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px}
+
+.bar{height:7px;background:#221f19;border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(270deg,var(--gold3),var(--gold),var(--gold2));transition:width .4s}
+
+.two{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;padding:2px 10px;border-radius:99px;border:1px solid var(--line2);color:var(--muted);white-space:nowrap;font-weight:600}
+.chip.st-active{border-color:var(--gold);color:var(--gold2);background:var(--goldbg)}
+.chip.st-done{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#17130a;border-color:transparent}
+.chip.st-paused{border-color:#5b5040;color:#b9a989}
+.chip.pr-high{border-color:rgba(224,107,95,.6);color:#f0a097}
+.chip.pr-mid{border-color:var(--gold3);color:var(--gold)}
+.chip.pr-low{border-color:var(--line2);color:var(--dim)}
+.chip.late{border-color:rgba(224,107,95,.6);color:#f0a097;background:rgba(224,107,95,.08)}
+.chip.item{border-color:var(--line2);color:var(--gold2);direction:ltr}
+
+/* ---------- buttons / fields ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:transparent;border:1px solid var(--gold3);color:var(--gold2);padding:8px 16px;border-radius:11px;cursor:pointer;font-weight:600;font-size:14px;transition:background .15s,border-color .15s;white-space:nowrap}
+.btn:hover{background:var(--goldbg);border-color:var(--gold)}
+.btn.primary{background:linear-gradient(135deg,var(--gold2),var(--gold) 55%,#b48f2a);color:#16120a;border-color:transparent;font-weight:700}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--gold2);background:rgba(255,255,255,.03)}
+.btn.danger{border-color:rgba(224,107,95,.5);color:#f0a097}
+.btn.danger:hover{background:rgba(224,107,95,.1)}
+.btn.sm{padding:5px 11px;font-size:13px;border-radius:9px}
+.icon-btn{background:none;border:0;color:var(--dim);cursor:pointer;width:32px;height:32px;border-radius:8px;font-size:15px;display:grid;place-items:center}
+.icon-btn:hover{color:var(--gold2);background:rgba(255,255,255,.04)}
+.icon-btn.del:hover{color:var(--danger)}
+
+.field,select.field,textarea.field{width:100%;background:var(--field);border:1px solid var(--line);border-radius:11px;padding:9px 12px;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}
+.field:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.12)}
+.field::placeholder{color:var(--dim)}
+input[type=date].field{color-scheme:dark;direction:ltr;text-align:right}
+select.field{cursor:pointer}
+select.field option{background:#141417}
+label.lb{display:block;font-size:12.5px;color:var(--muted);margin:0 0 5px;font-weight:600}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>.grow{flex:1 1 220px}
+
+/* ---------- item page ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:22px;align-items:center;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset-inline-end:-80px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.12),transparent 70%);pointer-events:none}
+.hero .code{font-size:34px}
+.hero .en{color:var(--muted);direction:ltr;text-align:right;font-size:14px}
+.hero p.desc{color:#cfc8ba;margin:10px 0 0;max-width:720px}
+.hero-ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:18px;max-width:720px}
+.ring text{fill:var(--gold2);font-weight:800;font-size:20px;font-family:Cairo,sans-serif}
+.ring .rl{fill:var(--muted);font-size:10.5px;font-weight:600}
+.stats{display:flex;gap:22px;flex-wrap:wrap;margin-top:16px;color:var(--muted);font-size:13px}
+.stats b{color:var(--gold2);font-size:15px}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:26px 0 16px;overflow-x:auto}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 16px;color:var(--muted);cursor:pointer;font-weight:600;white-space:nowrap;margin-bottom:-1px}
+.tabs button.on{color:var(--gold2);border-bottom-color:var(--gold)}
+.tabs button .n{font-size:11px;background:#222;border-radius:99px;padding:0 7px;margin-inline-start:4px;color:var(--muted)}
+
+.seg{display:inline-flex;background:var(--field);border:1px solid var(--line);border-radius:11px;padding:3px}
+.seg button{background:none;border:0;padding:5px 12px;border-radius:8px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:600}
+.seg button.on{background:var(--goldbg);color:var(--gold2)}
+
+/* ---------- tasks ---------- */
+.tasks{display:flex;flex-direction:column}
+.task{display:flex;align-items:center;gap:12px;padding:12px 6px;border-bottom:1px solid var(--line)}
+.task:last-child{border-bottom:0}
+.chk{flex:none;width:24px;height:24px;border-radius:50%;border:1.6px solid var(--gold3);background:transparent;cursor:pointer;display:grid;place-items:center;color:transparent;font-size:13px;font-weight:900;transition:all .15s;padding:0}
+.chk:hover{border-color:var(--gold);background:var(--goldbg)}
+.task.done .chk{background:linear-gradient(135deg,var(--gold2),var(--gold));border-color:transparent;color:#16120a}
+.task .body{flex:1;min-width:0}
+.task .tt{font-weight:600;word-break:break-word}
+.task.done .tt{color:var(--dim);text-decoration:line-through;text-decoration-color:var(--gold3)}
+.task .mt{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;align-items:center}
+.task .note{color:var(--muted);font-size:12.5px;margin-top:3px;white-space:pre-wrap}
+.task .acts{display:flex;gap:2px;opacity:.55;transition:opacity .15s}
+.task:hover .acts{opacity:1}
+.add-task{display:grid;grid-template-columns:1fr 160px 130px auto;gap:10px;margin-bottom:8px}
+
+.empty{text-align:center;color:var(--muted);padding:34px 12px}
+.empty .big{font-size:34px;color:var(--gold);margin-bottom:6px}
+
+/* ---------- notes / links ---------- */
+textarea.notes{min-height:320px;resize:vertical;line-height:1.9}
+.saved{font-size:12px;color:var(--dim);margin-top:6px}
+.link{display:flex;align-items:center;gap:12px;padding:12px 6px;border-bottom:1px solid var(--line)}
+.link:last-child{border-bottom:0}
+.link .ic{width:34px;height:34px;border-radius:10px;background:var(--goldbg);display:grid;place-items:center;color:var(--gold);flex:none}
+.link a{color:var(--gold2);font-weight:600}
+.link a:hover{text-decoration:underline}
+.link .u{color:var(--dim);font-size:12px;direction:ltr;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- list rows (dashboard) ---------- */
+.lrow{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.lrow:last-child{border-bottom:0}
+.lrow .grow{flex:1;min-width:0}
+.lrow .d{color:var(--muted);font-size:12.5px;direction:ltr;white-space:nowrap}
+
+/* ---------- modal / toast ---------- */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:100;padding:16px}
+.modal[hidden]{display:none}
+.dialog{width:min(520px,100%);max-height:90vh;overflow:auto;background:linear-gradient(180deg,#17171a,#111113);border:1px solid var(--gold3);border-radius:18px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.dialog h3{margin:0 0 16px;color:var(--gold2);font-size:18px}
+.dialog .fs{display:flex;flex-direction:column;gap:12px}
+.dialog .ft{display:flex;gap:8px;justify-content:flex-start;margin-top:20px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(30px);background:#17150f;border:1px solid var(--gold3);color:var(--gold2);padding:10px 20px;border-radius:12px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;font-weight:600}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.overlay{display:none}
+.soon{padding:44px 20px;text-align:center}
+.soon .big{font-size:46px;color:var(--gold);line-height:1}
+.soon h2{margin:12px 0 6px;color:var(--gold2)}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .two{grid-template-columns:1fr}
+}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  aside{position:fixed;inset-block:0;right:0;width:290px;z-index:60;transform:translateX(105%);transition:transform .25s}
+  body.nav-open aside{transform:none}
+  body.nav-open .overlay{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50}
+  .hamb{display:grid;place-items:center}
+  main{padding:16px 16px 50px}
+  .h1{font-size:23px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero-ctrl{grid-template-columns:1fr 1fr}
+  .hero .ringwrap{justify-self:start}
+  .add-task{grid-template-columns:1fr 1fr}
+  .add-task .field:first-child{grid-column:1/-1}
+  .add-task .btn{grid-column:1/-1}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0d78a"/><stop offset=".55" stop-color="#d4af37"/><stop offset="1" stop-color="#8c7330"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="app">
+  <aside id="sidebar"></aside>
+  <div class="overlay" data-action="close-nav"></div>
+  <main>
+    <div class="wrap">
+      <div class="topbar">
+        <button class="hamb" data-action="open-nav" aria-label="القائمة">☰</button>
+        <div class="crumbs" id="crumbs"></div>
+      </div>
+      <div id="view"></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <form class="dialog" id="modalForm" autocomplete="off">
+    <h3 id="modalTitle"></h3>
+    <div class="fs" id="modalBody"></div>
+    <div class="ft">
+      <button type="submit" class="btn primary" id="modalOk">حفظ</button>
+      <button type="button" class="btn ghost" data-action="modal-close">إلغاء</button>
+    </div>
+  </form>
+</div>
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+<div id="toast"></div>
+
+<script>
+/* =========================================================
+   خطة التطوير الذاتي — Hadeer Nabil
+   كل البيانات بتتحفظ في المتصفح (localStorage)
+   ========================================================= */
+const KEY = 'hn-devplan-v1';
+const STATUS = {not:'لم يبدأ', active:'جاري', paused:'متوقف', done:'مكتمل'};
+const PRIO = {high:'عالية', mid:'متوسطة', low:'منخفضة'};
+const PRIO_RANK = {high:0, mid:1, low:2};
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const iso = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today = () => iso(new Date());
+const addDays = (s,n) => { const d = new Date(s+'T00:00'); d.setDate(d.getDate()+n); return iso(d); };
+const daysBetween = (a,b) => Math.round((new Date(b+'T00:00') - new Date(a+'T00:00'))/86400000);
+const fmt = s => s ? new Date(s+'T00:00').toLocaleDateString('ar-EG-u-nu-latn',{day:'numeric',month:'short',year:'numeric'}) : '';
+const fmtShort = s => s ? new Date(s+'T00:00').toLocaleDateString('ar-EG-u-nu-latn',{day:'numeric',month:'short'}) : '';
+
+/* ---------------- البيانات المبدئية ---------------- */
+function seed(){
+  const T = arr => arr.map((x,i) => ({id:uid(), title:x, done:false, due:'', prio:'mid', note:'', created:Date.now()+i, doneAt:null}));
+  const PMI = {title:'موقع شهادات PMI', url:'https://www.pmi.org/certifications'};
+  const item = (id, group, code, title, en, desc, tasks, links=[]) =>
+    ({id, group, code, title, en, desc, status:'not', target:'', notes:'', links, tasks:T(tasks)});
+  return {
+    v:1,
+    sections:[
+      {id:'programs', name:'البرامج', icon:'◈', groups:[{id:'prog-main', name:'البرامج'}], soon:true},
+      {id:'management', name:'الإدارة', icon:'♛', groups:[{id:'certs', name:'شهادات PMI'},{id:'tools', name:'برامج الإدارة'}]}
+    ],
+    items:[
+      item('pmp','certs','PMP','محترف إدارة المشروعات','Project Management Professional',
+        'الشهادة الأساسية والأشهر في إدارة المشروعات من PMI.',
+        ['مراجعة شروط التقديم والأهلية على موقع PMI','استكمال ساعات التدريب المطلوبة (35 ساعة)','تجهيز وتوثيق الخبرة العملية','تقديم الطلب على موقع PMI','خطة مذاكرة + امتحانات تجريبية','حجز ميعاد الامتحان'],[PMI]),
+      item('rmp','certs','PMI-RMP','محترف إدارة المخاطر','Risk Management Professional',
+        'شهادة متخصصة في تحديد وتحليل والاستجابة لمخاطر المشروعات.',
+        ['مراجعة شروط التقديم والأهلية','تحديد مصادر المذاكرة','عمل خطة مذاكرة أسبوعية'],[PMI]),
+      item('sp','certs','PMI-SP','محترف الجدولة الزمنية','Scheduling Professional',
+        'شهادة متخصصة في تخطيط وإعداد ومتابعة الجداول الزمنية للمشروعات.',
+        ['مراجعة شروط التقديم والأهلية','تحديد مصادر المذاكرة','عمل خطة مذاكرة أسبوعية'],[PMI]),
+      item('cpmai','certs','PMI-CPMAI','إدارة مشروعات الذكاء الاصطناعي','Cognitive Project Management in AI',
+        'شهادة PMI لإدارة مشروعات الذكاء الاصطناعي والبيانات.',
+        ['مراجعة تفاصيل الشهادة ومتطلباتها','التسجيل في التدريب','عمل خطة مذاكرة'],[PMI]),
+      item('p6','tools','P6','بريمافيرا','Primavera P6',
+        'تخطيط وجدولة ومتابعة المشروعات على برنامج Primavera P6.',
+        ['تجهيز البرنامج على الجهاز','إنشاء مشروع و WBS','الأنشطة والعلاقات (Activities & Relationships)','تحميل الموارد والتكاليف','الـ Baseline والتحديث والمتابعة']),
+      item('excel','tools','XL','إكسيل متقدم','Advanced Excel',
+        'الدوال المتقدمة وتحليل البيانات وعمل الداشبورد.',
+        ['الدوال المتقدمة (XLOOKUP / INDEX-MATCH / IF)','Pivot Tables','Power Query','عمل Dashboard احترافي']),
+      item('cost','tools','CC','التحكم في التكاليف والتقدير','Cost Control & Estimation',
+        'تقدير التكاليف، الموازنات، ومتابعة الأداء المالي للمشروع.',
+        ['أساسيات تقدير التكاليف','إعداد الموازنة (Budget / Cost Baseline)','Earned Value Management','تقارير التكلفة']),
+      item('proc','tools','SCM','المشتريات وسلاسل الإمداد','Procurement & Supply Chain Management',
+        'دورة المشتريات، تقييم الموردين، وإدارة سلاسل الإمداد.',
+        ['دورة المشتريات من الطلب للاستلام','تقييم واختيار الموردين','أساسيات المخازن واللوجستيات']),
+      item('claims','tools','CCM','إدارة العقود والمطالبات','Contract & Claims Management',
+        'إدارة العقود، الأوامر التغييرية، والمطالبات.',
+        ['أساسيات أنواع العقود','عقود FIDIC','الأوامر التغييرية (Variations)','المطالبات وتحليل التأخير (EOT & Delay Analysis)'])
+    ]
+  };
+}
+
+function migrate(d){
+  if(!d || !Array.isArray(d.items) || !Array.isArray(d.sections)) throw new Error('bad');
+  d.items.forEach(i => {
+    i.tasks = Array.isArray(i.tasks) ? i.tasks : [];
+    i.links = Array.isArray(i.links) ? i.links : [];
+    i.notes = i.notes || ''; i.status = STATUS[i.status] ? i.status : 'not'; i.target = i.target || '';
+    i.tasks.forEach(t => { t.prio = PRIO[t.prio] ? t.prio : 'mid'; t.due = t.due || ''; t.note = t.note || ''; });
+  });
+  return d;
+}
+
+let S;
+try { const raw = localStorage.getItem(KEY); S = raw ? migrate(JSON.parse(raw)) : seed(); } catch(e){ S = seed(); }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
+save();
+
+/* ---------------- مساعدات ---------------- */
+const ui = {itemTab:'tasks', taskFilter:'open', lastItem:null, allItem:'all', allStatus:'open', allQ:''};
+const itemById = id => S.items.find(i => i.id === id);
+const groupOf = gid => { for(const s of S.sections){ const g = s.groups.find(g => g.id === gid); if(g) return {sec:s, grp:g}; } return {}; };
+const itemsOfGroup = gid => S.items.filter(i => i.group === gid);
+const itemsOfSection = sid => { const s = S.sections.find(x => x.id === sid); return s ? s.groups.flatMap(g => itemsOfGroup(g.id)) : []; };
+const progress = i => i.tasks.length ? Math.round(i.tasks.filter(t => t.done).length / i.tasks.length * 100) : (i.status === 'done' ? 100 : 0);
+const groupProgress = items => { const all = items.flatMap(i => i.tasks); return all.length ? Math.round(all.filter(t=>t.done).length/all.length*100) : 0; };
+const isLate = t => !t.done && t.due && t.due < today();
+const sortTasks = arr => arr.slice().sort((a,b) =>
+  (a.done - b.done) || ((a.due||'9999') < (b.due||'9999') ? -1 : (a.due||'9999') > (b.due||'9999') ? 1 : 0) ||
+  (PRIO_RANK[a.prio] - PRIO_RANK[b.prio]) || (a.created - b.created));
+
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 1800); }
+
+function ring(p, size=112){
+  const r = (size-12)/2, c = 2*Math.PI*r, h = size/2;
+  return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="التقدم ${p}%">
+    <circle cx="${h}" cy="${h}" r="${r}" fill="none" stroke="#221f19" stroke-width="9"/>
+    <circle cx="${h}" cy="${h}" r="${r}" fill="none" stroke="url(#goldGrad)" stroke-width="9" stroke-linecap="round"
+      stroke-dasharray="${c}" stroke-dashoffset="${c*(1-p/100)}" transform="rotate(-90 ${h} ${h})"/>
+    <text x="50%" y="${h-6}" text-anchor="middle" dominant-baseline="central">${p}%</text>
+    <text class="rl" x="50%" y="${h+16}" text-anchor="middle" dominant-baseline="central">الإنجاز</text></svg>`;
+}
+const bar = p => `<div class="bar"><i style="width:${p}%"></i></div>`;
+const statusChip = s => `<span class="chip st-${s}">${STATUS[s]}</span>`;
+
+/* ---------------- الشريط الجانبي ---------------- */
+function renderSide(route){
+  const a = (href, ic, nm, extra='', active=false) =>
+    `<a href="${href}" class="${active?'active':''}"><span class="ic">${ic}</span><span class="nm">${nm}</span>${extra}</a>`;
+  let h = `<div class="brand"><div class="mono">HN</div><div><b>Hadeer Nabil</b><small>خطة التطوير الذاتي</small></div></div>
+  <nav class="nav">
+    ${a('#/', '◆', 'لوحة التحكم', '', route.name==='dash')}
+    ${a('#/tasks', '✓', 'كل المهام', `<span class="pc">${S.items.flatMap(i=>i.tasks).filter(t=>!t.done).length}</span>`, route.name==='tasks')}`;
+  for(const s of S.sections){
+    const items = itemsOfSection(s.id);
+    h += `<div class="nav-sec"><span>${esc(s.name)}</span>${items.length===0?'<span class="tag-soon">قريباً</span>':''}</div>`;
+    h += a(`#/section/${s.id}`, s.icon, `نظرة عامة — ${esc(s.name)}`, '', route.name==='section' && route.id===s.id);
+    for(const g of s.groups){
+      const gi = itemsOfGroup(g.id);
+      if(!gi.length) continue;
+      if(s.groups.length > 1 || g.name !== s.name) h += `<div class="nav-grp">${esc(g.name)}</div>`;
+      for(const i of gi){
+        h += a(`#/item/${i.id}`, '•', `<span class="ltr">${esc(i.code)}</span> <span style="color:var(--muted);font-size:12.5px">${esc(i.title)}</span>`,
+          `<span class="pc">${progress(i)}%</span>`, route.name==='item' && route.id===i.id);
+      }
+    }
+  }
+  h += `<div class="nav-sec"><span>الإعدادات</span></div>${a('#/backup','⇅','النسخ الاحتياطي','', route.name==='backup')}
+  </nav><div class="side-foot">صُمّم خصيصاً لـ <span class="en" style="color:var(--gold)">Hadeer Nabil</span></div>`;
+  document.getElementById('sidebar').innerHTML = h;
+}
+
+/* ---------------- لوحة التحكم ---------------- */
+function viewDash(){
+  const all = S.items.flatMap(i => i.tasks.map(t => ({...t, item:i})));
+  const done = all.filter(t => t.done).length;
+  const pct = all.length ? Math.round(done/all.length*100) : 0;
+  const late = all.filter(isLate);
+  const t0 = today(), t7 = addDays(t0, 7);
+  const soon = all.filter(t => !t.done && t.due && t.due >= t0 && t.due <= t7);
+  const active = S.items.filter(i => i.status === 'active').length;
+  const certsDone = S.items.filter(i => i.status === 'done').length;
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'صباح الخير' : 'مساء الخير';
+  const dateStr = new Date().toLocaleDateString('ar-EG-u-nu-latn',{weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+  const focus = sortTasks([...late, ...soon]).slice(0, 8);
+  const targets = S.items.filter(i => i.target && i.status !== 'done').sort((a,b) => a.target < b.target ? -1 : 1);
+
+  let h = `<h1 class="h1">${greet} يا <span class="g">هدير</span> ✦</h1>
+  <p class="sub">${dateStr} — خطوة صغيرة كل يوم تفرق كتير.</p>
+  <div class="kpis">
+    <div class="card kpi"><div class="lbl">نسبة الإنجاز الكلية</div><div class="val">${pct}%</div>${bar(pct)}</div>
+    <div class="card kpi"><div class="lbl">المهام المنجزة</div><div class="val">${done}<small> / ${all.length}</small></div><div class="hint">${all.length-done} مهمة متبقية</div></div>
+    <div class="card kpi"><div class="lbl">مسارات جارية</div><div class="val">${active}<small> / ${S.items.length}</small></div><div class="hint">${certsDone} مسار مكتمل</div></div>
+    <div class="card kpi ${late.length?'warn':''}"><div class="lbl">مهام متأخرة</div><div class="val">${late.length}</div><div class="hint">${soon.length} مهمة خلال 7 أيام</div></div>
+  </div>
+
+  <div class="sec-head"><h2 class="h2">إضافة مهمة سريعة</h2></div>
+  <form class="card" data-form="quick">
+    <div class="row">
+      <div class="grow"><label class="lb">المهمة</label><input class="field" name="title" placeholder="مثلاً: مذاكرة الفصل الأول" required></div>
+      <div style="flex:1 1 200px"><label class="lb">المسار</label><select class="field" name="item">${
+        S.sections.map(s => { const its = itemsOfSection(s.id); return its.length ? `<optgroup label="${esc(s.name)}">${its.map(i=>`<option value="${i.id}" ${ui.lastItem===i.id?'selected':''}>${esc(i.code)} — ${esc(i.title)}</option>`).join('')}</optgroup>` : ''; }).join('')
+      }</select></div>
+      <div style="flex:0 1 170px"><label class="lb">الميعاد</label><input class="field" type="date" name="due"></div>
+      <button class="btn primary" type="submit">+ إضافة</button>
+    </div>
+  </form>
+
+  <div class="two" style="margin-top:16px">
+    <div class="card">
+      <div class="sec-head" style="margin:0 0 8px"><h2 class="h2">تركيز الأسبوع</h2><a class="btn sm ghost" href="#/tasks">كل المهام ←</a></div>
+      ${focus.length ? `<div class="tasks">${focus.map(t => taskRow(t, t.item, true)).join('')}</div>`
+        : `<div class="empty"><div class="big">✦</div>مفيش مهام متأخرة أو مستحقة خلال الأسبوع.<br><span style="font-size:13px">حطي مواعيد للمهام عشان تظهر هنا.</span></div>`}
+    </div>
+    <div class="card">
+      <div class="sec-head" style="margin:0 0 8px"><h2 class="h2">المواعيد المستهدفة</h2></div>
+      ${targets.length ? targets.map(i => { const d = daysBetween(t0, i.target);
+        return `<a class="lrow" href="#/item/${i.id}"><span class="code" style="font-size:15px;min-width:70px">${esc(i.code)}</span>
+          <span class="grow">${esc(i.title)}</span>
+          <span class="chip ${d<0?'late':''}">${d<0?`متأخر ${-d} يوم`:d===0?'النهارده':`باقي ${d} يوم`}</span></a>`; }).join('')
+        : `<div class="empty"><div class="big">◷</div>لسه مفيش تاريخ مستهدف لأي مسار.<br><span style="font-size:13px">افتحي أي شهادة أو برنامج وحددي تاريخ الهدف.</span></div>`}
+    </div>
+  </div>`;
+
+  for(const s of S.sections){
+    for(const g of s.groups){
+      const its = itemsOfGroup(g.id);
+      if(!its.length) continue;
+      h += `<div class="sec-head"><h2 class="h2">${esc(s.name)} · ${esc(g.name)}</h2><span class="chip">${groupProgress(its)}% إجمالي</span></div>
+      <div class="grid-items">${its.map(itemCard).join('')}</div>`;
+    }
+    if(!itemsOfSection(s.id).length){
+      h += `<div class="sec-head"><h2 class="h2">${esc(s.name)}</h2><span class="tag-soon">قريباً</span></div>
+      <a class="card" href="#/section/${s.id}" style="display:block;color:var(--muted)">القسم ده هنبنيه مع بعض قريباً — اضغطي هنا لو حابة تضيفي أول عنصر.</a>`;
+    }
+  }
+  return h;
+}
+
+function itemCard(i){
+  const p = progress(i), d = i.tasks.filter(t=>t.done).length;
+  return `<div class="card icard" data-action="go" data-href="#/item/${i.id}">
+    <div class="top"><span class="code">${esc(i.code)}</span>${statusChip(i.status)}</div>
+    <div><div class="tt">${esc(i.title)}</div><div class="en">${esc(i.en)}</div></div>
+    ${bar(p)}
+    <div class="meta"><span>${d} / ${i.tasks.length} مهمة</span><span dir="ltr">${p}%</span></div>
+  </div>`;
+}
+
+function taskRow(t, item, showItem=false){
+  const late = isLate(t);
+  return `<div class="task ${t.done?'done':''}">
+    <button class="chk" data-action="toggle" data-item="${item.id}" data-task="${t.id}" aria-label="${t.done?'إلغاء الإنجاز':'تم'}">✓</button>
+    <div class="body">
+      <div class="tt">${esc(t.title)}</div>
+      <div class="mt">
+        ${showItem ? `<a class="chip item" href="#/item/${item.id}">${esc(item.code)}</a>` : ''}
+        <span class="chip pr-${t.prio}">${PRIO[t.prio]}</span>
+        ${t.due ? `<span class="chip ${late?'late':''}">${late?'متأخرة · ':''}${fmtShort(t.due)}</span>` : ''}
+      </div>
+      ${t.note ? `<div class="note">${esc(t.note)}</div>` : ''}
+    </div>
+    <div class="acts">
+      <button class="icon-btn" data-action="edit-task" data-item="${item.id}" data-task="${t.id}" title="تعديل">✎</button>
+      <button class="icon-btn del" data-action="del-task" data-item="${item.id}" data-task="${t.id}" title="حذف">✕</button>
+    </div>
+  </div>`;
+}
+
+/* ---------------- صفحة المسار ---------------- */
+function viewItem(id){
+  const i = itemById(id);
+  if(!i) return `<div class="card empty"><div class="big">?</div>العنصر ده مش موجود. <a href="#/" style="color:var(--gold2)">ارجعي للوحة التحكم</a></div>`;
+  if(ui.lastItem !== id){ ui.itemTab = 'tasks'; ui.taskFilter = 'open'; }
+  ui.lastItem = id;
+  const p = progress(i), d = i.tasks.filter(t=>t.done).length;
+  const left = i.target ? daysBetween(today(), i.target) : null;
+  const {grp, sec} = groupOf(i.group);
+
+  let h = `<div class="card hero">
+    <div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span class="code">${esc(i.code)}</span>${statusChip(i.status)}</div>
+      <div class="h1" style="font-size:24px;margin-top:4px">${esc(i.title)}</div>
+      <div class="en">${esc(i.en)}</div>
+      ${i.desc ? `<p class="desc">${esc(i.desc)}</p>` : ''}
+      <div class="hero-ctrl">
+        <div><label class="lb">الحالة</label><select class="field" data-change="status" data-item="${i.id}">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${i.status===k?'selected':''}>${v}</option>`).join('')}</select></div>
+        <div><label class="lb">التاريخ المستهدف</label><input class="field" type="date" value="${i.target}" data-change="target" data-item="${i.id}"></div>
+        <div style="display:flex;align-items:flex-end;gap:6px"><button class="btn sm" data-action="edit-item" data-item="${i.id}">✎ تعديل البيانات</button></div>
+      </div>
+      <div class="stats">
+        <span>المهام: <b>${d} / ${i.tasks.length}</b></span>
+        <span>المتأخر: <b>${i.tasks.filter(isLate).length}</b></span>
+        ${left!==null ? `<span>${left<0?'متأخر عن الهدف':'باقي على الهدف'}: <b>${Math.abs(left)} يوم</b></span>` : ''}
+        <span>القسم: <b><bdi>${esc(sec?.name||'')} · ${esc(grp?.name||'')}</bdi></b></span>
+      </div>
+    </div>
+    <div class="ringwrap">${ring(p)}</div>
+  </div>
+
+  <div class="tabs">
+    ${[['tasks','المهام',i.tasks.length],['notes','الملاحظات',null],['links','المصادر',i.links.length]].map(([k,v,n]) =>
+      `<button data-action="tab" data-tab="${k}" class="${ui.itemTab===k?'on':''}">${v}${n!==null?`<span class="n">${n}</span>`:''}</button>`).join('')}
+  </div>`;
+
+  if(ui.itemTab === 'tasks'){
+    const list = sortTasks(i.tasks.filter(t => ui.taskFilter==='all' ? true : ui.taskFilter==='done' ? t.done : !t.done));
+    h += `<div class="card">
+      <form class="add-task" data-form="add-task" data-item="${i.id}">
+        <input class="field" name="title" placeholder="مهمة جديدة لـ ${esc(i.code)}..." required>
+        <input class="field" type="date" name="due" title="الميعاد">
+        <select class="field" name="prio">${Object.entries(PRIO).map(([k,v])=>`<option value="${k}" ${k==='mid'?'selected':''}>أولوية ${v}</option>`).join('')}</select>
+        <button class="btn primary" type="submit">+ إضافة</button>
+      </form>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 4px;gap:10px;flex-wrap:wrap">
+        <div class="seg">${[['open','الحالية'],['done','المنجزة'],['all','الكل']].map(([k,v])=>`<button data-action="filter" data-f="${k}" class="${ui.taskFilter===k?'on':''}">${v}</button>`).join('')}</div>
+        ${bar(p).replace('class="bar"','class="bar" style="flex:0 1 220px"')}
+      </div>
+      ${list.length ? `<div class="tasks">${list.map(t => taskRow(t, i)).join('')}</div>`
+        : `<div class="empty"><div class="big">${ui.taskFilter==='done'?'◇':'✦'}</div>${ui.taskFilter==='done'?'لسه مفيش مهام منجزة.':ui.taskFilter==='open'&&i.tasks.length?'برافو! كل المهام خلصت 🎉':'مفيش مهام لسه — ابدئي بإضافة أول مهمة.'}</div>`}
+    </div>`;
+  } else if(ui.itemTab === 'notes'){
+    h += `<div class="card"><label class="lb">ملاحظات ${esc(i.code)} — بتتحفظ تلقائياً</label>
+      <textarea class="field notes" data-notes="${i.id}" placeholder="اكتبي هنا ملخصات، أفكار، أسئلة للمراجعة...">${esc(i.notes)}</textarea>
+      <div class="saved" id="savedMsg">${i.notes ? 'محفوظ ✓' : ''}</div></div>`;
+  } else {
+    h += `<div class="card">
+      <form class="row" data-form="add-link" data-item="${i.id}" style="margin-bottom:10px">
+        <div class="grow"><label class="lb">اسم المصدر</label><input class="field" name="title" placeholder="مثلاً: كورس على يوديمي" required></div>
+        <div class="grow"><label class="lb">الرابط</label><input class="field" name="url" placeholder="https://..." dir="ltr" required></div>
+        <button class="btn primary" type="submit">+ إضافة</button>
+      </form>
+      ${i.links.length ? i.links.map(l => `<div class="link"><span class="ic">↗</span>
+          <div style="flex:1;min-width:0"><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.title)}</a><div class="u">${esc(l.url)}</div></div>
+          <button class="icon-btn del" data-action="del-link" data-item="${i.id}" data-link="${esc(l.id)}" title="حذف">✕</button></div>`).join('')
+        : `<div class="empty"><div class="big">↗</div>ضيفي هنا الكورسات والكتب والروابط المهمة.</div>`}
+    </div>`;
+  }
+
+  h += `<div style="margin-top:28px;text-align:left"><button class="btn sm danger" data-action="del-item" data-item="${i.id}">حذف هذا المسار</button></div>`;
+  return h;
+}
+
+/* ---------------- القسم ---------------- */
+function viewSection(id){
+  const s = S.sections.find(x => x.id === id);
+  if(!s) return `<div class="card empty">القسم مش موجود.</div>`;
+  const its = itemsOfSection(id);
+  let h = `<h1 class="h1"><span class="g">${s.icon}</span> ${esc(s.name)}</h1>
+    <p class="sub">${its.length ? `${its.length} مسار · ${groupProgress(its)}% إنجاز إجمالي` : 'القسم ده لسه فاضي'}</p>`;
+  if(!its.length){
+    h += `<div class="card soon" style="margin-top:22px"><div class="big">${s.icon}</div><h2>قريباً</h2>
+      <p class="sub">هنحدد محتوى قسم ${esc(s.name)} مع بعض خطوة بخطوة.</p>
+      <div style="margin-top:18px"><button class="btn primary" data-action="add-item" data-group="${s.groups[0].id}">+ إضافة أول عنصر</button></div></div>`;
+    return h;
+  }
+  for(const g of s.groups){
+    const gi = itemsOfGroup(g.id);
+    h += `<div class="sec-head"><h2 class="h2">${esc(g.name)}</h2><button class="btn sm" data-action="add-item" data-group="${g.id}">+ إضافة عنصر</button></div>
+      ${gi.length ? `<div class="grid-items">${gi.map(itemCard).join('')}</div>` : `<div class="card empty">مفيش عناصر هنا لسه.</div>`}`;
+  }
+  return h;
+}
+
+/* ---------------- كل المهام ---------------- */
+function viewTasks(){
+  let all = S.items.flatMap(i => i.tasks.map(t => ({t, i})));
+  const counts = {open: all.filter(x=>!x.t.done).length, late: all.filter(x=>isLate(x.t)).length, done: all.filter(x=>x.t.done).length, all: all.length};
+  if(ui.allItem !== 'all') all = all.filter(x => x.i.id === ui.allItem);
+  if(ui.allStatus === 'open') all = all.filter(x => !x.t.done);
+  if(ui.allStatus === 'done') all = all.filter(x => x.t.done);
+  if(ui.allStatus === 'late') all = all.filter(x => isLate(x.t));
+  const q = ui.allQ.trim().toLowerCase();
+  if(q) all = all.filter(x => (x.t.title + ' ' + x.t.note).toLowerCase().includes(q));
+  const sorted = sortTasks(all.map(x => x.t)).map(t => all.find(x => x.t === t));
+
+  return `<h1 class="h1">كل المهام</h1><p class="sub">${counts.open} حالية · ${counts.late} متأخرة · ${counts.done} منجزة</p>
+  <div class="card" style="margin-top:20px">
+    <div class="row" style="margin-bottom:12px">
+      <div class="seg">${[['open','الحالية'],['late','المتأخرة'],['done','المنجزة'],['all','الكل']].map(([k,v])=>`<button data-action="all-status" data-f="${k}" class="${ui.allStatus===k?'on':''}">${v}</button>`).join('')}</div>
+      <div style="flex:1 1 200px"><select class="field" data-change="all-item"><option value="all">كل المسارات</option>${S.items.map(i=>`<option value="${i.id}" ${ui.allItem===i.id?'selected':''}>${esc(i.code)} — ${esc(i.title)}</option>`).join('')}</select></div>
+      <div style="flex:1 1 200px"><input class="field" id="allQ" placeholder="بحث..." value="${esc(ui.allQ)}"></div>
+    </div>
+    ${sorted.length ? `<div class="tasks">${sorted.map(x => taskRow(x.t, x.i, true)).join('')}</div>` : `<div class="empty"><div class="big">✦</div>مفيش مهام بالفلتر ده.</div>`}
+  </div>`;
+}
+
+/* ---------------- النسخ الاحتياطي ---------------- */
+function viewBackup(){
+  return `<h1 class="h1">النسخ الاحتياطي</h1>
+  <p class="sub">البيانات محفوظة في المتصفح ده بس. خدي نسخة احتياطية بانتظام عشان متضيعش لو اتمسح المتصفح أو غيرتي الجهاز.</p>
+  <div class="grid-items" style="margin-top:22px">
+    <div class="card"><div class="h2">تصدير</div><p class="sub" style="margin:10px 0 14px">تحميل ملف JSON فيه كل المسارات والمهام والملاحظات.</p><button class="btn primary" data-action="export">⇩ تحميل نسخة</button></div>
+    <div class="card"><div class="h2">استيراد</div><p class="sub" style="margin:10px 0 14px">استرجاع البيانات من ملف نسخة سابق (هيستبدل البيانات الحالية).</p><button class="btn" data-action="import">⇧ رفع ملف</button></div>
+    <div class="card"><div class="h2">إعادة ضبط</div><p class="sub" style="margin:10px 0 14px">مسح كل حاجة والرجوع للخطة المبدئية.</p><button class="btn danger" data-action="reset">إعادة ضبط</button></div>
+  </div>`;
+}
+
+/* ---------------- التوجيه ---------------- */
+function parseRoute(){
+  const p = (location.hash.replace(/^#\/?/,'') || '').split('/');
+  if(p[0]==='item') return {name:'item', id:p[1]};
+  if(p[0]==='section') return {name:'section', id:p[1]};
+  if(p[0]==='tasks') return {name:'tasks'};
+  if(p[0]==='backup') return {name:'backup'};
+  return {name:'dash'};
+}
+
+function render(focusSel){
+  const r = parseRoute();
+  renderSide(r);
+  const crumbs = document.getElementById('crumbs');
+  let html = '', c = '<a href="#/">الرئيسية</a>';
+  if(r.name==='item'){ const i = itemById(r.id); const g = i ? groupOf(i.group) : {};
+    html = viewItem(r.id); c += i ? ` › <bdi>${esc(g.sec?.name||'')}</bdi> › <bdi>${esc(g.grp?.name||'')}</bdi> › <b><bdi>${esc(i.code)}</bdi></b>` : ''; }
+  else if(r.name==='section'){ html = viewSection(r.id); const s = S.sections.find(x=>x.id===r.id); c += ` › <b>${esc(s?.name||'')}</b>`; }
+  else if(r.name==='tasks'){ html = viewTasks(); c += ' › <b>كل المهام</b>'; }
+  else if(r.name==='backup'){ html = viewBackup(); c += ' › <b>النسخ الاحتياطي</b>'; }
+  else { html = viewDash(); c = '<b>لوحة التحكم</b>'; }
+  crumbs.innerHTML = c;
+  document.getElementById('view').innerHTML = html;
+  if(focusSel){ const el = document.querySelector(focusSel); if(el){ el.focus(); if(el.setSelectionRange && el.value) el.setSelectionRange(el.value.length, el.value.length); } }
+}
+let lastHash = location.hash;
+window.addEventListener('hashchange', () => { document.body.classList.remove('nav-open'); render(); if(location.hash !== lastHash) window.scrollTo(0,0); lastHash = location.hash; });
+
+/* ---------------- النوافذ ---------------- */
+let modalSubmit = null;
+function openModal(title, body, onSubmit, okLabel='حفظ', danger=false){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = body;
+  const ok = document.getElementById('modalOk');
+  ok.textContent = okLabel; ok.className = 'btn ' + (danger ? 'danger' : 'primary');
+  modalSubmit = onSubmit;
+  const m = document.getElementById('modal'); m.hidden = false;
+  setTimeout(() => (m.querySelector('input,textarea,select') || ok).focus(), 30);
+}
+const closeModal = () => { document.getElementById('modal').hidden = true; modalSubmit = null; };
+const confirmBox = (title, msg, fn, label='حذف') => openModal(title, `<p class="sub" style="margin:0">${msg}</p>`, () => fn(), label, true);
+
+document.getElementById('modalForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const fd = Object.fromEntries(new FormData(e.target));
+  const fn = modalSubmit; closeModal(); fn && fn(fd);
+});
+document.getElementById('modal').addEventListener('click', e => { if(e.target.id === 'modal') closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeModal(); document.body.classList.remove('nav-open'); } });
+
+function itemForm(i={}){
+  return `<div><label class="lb">الكود المختصر</label><input class="field" name="code" value="${esc(i.code||'')}" placeholder="مثلاً: PMP" dir="ltr" required></div>
+  <div><label class="lb">الاسم بالعربي</label><input class="field" name="title" value="${esc(i.title||'')}" required></div>
+  <div><label class="lb">الاسم بالإنجليزي</label><input class="field" name="en" value="${esc(i.en||'')}" dir="ltr"></div>
+  <div><label class="lb">وصف مختصر</label><textarea class="field" name="desc" rows="3">${esc(i.desc||'')}</textarea></div>`;
+}
+
+/* ---------------- الأحداث ---------------- */
+const findTask = (iid, tid) => { const i = itemById(iid); return i ? [i, i.tasks.find(t => t.id === tid)] : [null, null]; };
+
+const actions = {
+  'go': el => location.hash = el.dataset.href,
+  'open-nav': () => document.body.classList.add('nav-open'),
+  'close-nav': () => document.body.classList.remove('nav-open'),
+  'modal-close': closeModal,
+  'tab': el => { ui.itemTab = el.dataset.tab; render(); },
+  'filter': el => { ui.taskFilter = el.dataset.f; render(); },
+  'all-status': el => { ui.allStatus = el.dataset.f; render(); },
+  'toggle': el => {
+    const [i, t] = findTask(el.dataset.item, el.dataset.task); if(!t) return;
+    t.done = !t.done; t.doneAt = t.done ? Date.now() : null;
+    if(t.done && i.status === 'not') i.status = 'active';
+    save(); render(); if(t.done) toast(i.tasks.every(x=>x.done) ? `أحسنتِ! خلصتي كل مهام ${i.code} 🎉` : 'برافو ✓');
+  },
+  'del-task': el => {
+    const [i, t] = findTask(el.dataset.item, el.dataset.task); if(!t) return;
+    confirmBox('حذف المهمة', `متأكدة إنك عايزة تحذفي "${esc(t.title)}"؟`, () => { i.tasks = i.tasks.filter(x => x !== t); save(); render(); toast('اتحذفت'); });
+  },
+  'edit-task': el => {
+    const [i, t] = findTask(el.dataset.item, el.dataset.task); if(!t) return;
+    openModal('تعديل المهمة', `
+      <div><label class="lb">المهمة</label><input class="field" name="title" value="${esc(t.title)}" required></div>
+      <div class="row"><div class="grow"><label class="lb">الميعاد</label><input class="field" type="date" name="due" value="${t.due}"></div>
+      <div class="grow"><label class="lb">الأولوية</label><select class="field" name="prio">${Object.entries(PRIO).map(([k,v])=>`<option value="${k}" ${t.prio===k?'selected':''}>${v}</option>`).join('')}</select></div></div>
+      <div><label class="lb">نقل لمسار</label><select class="field" name="item">${S.items.map(x=>`<option value="${x.id}" ${x.id===i.id?'selected':''}>${esc(x.code)} — ${esc(x.title)}</option>`).join('')}</select></div>
+      <div><label class="lb">ملاحظة</label><textarea class="field" name="note" rows="3">${esc(t.note)}</textarea></div>`,
+      fd => {
+        Object.assign(t, {title: fd.title.trim() || t.title, due: fd.due, prio: fd.prio, note: fd.note.trim()});
+        if(fd.item !== i.id){ const to = itemById(fd.item); if(to){ i.tasks = i.tasks.filter(x => x !== t); to.tasks.push(t); } }
+        save(); render(); toast('اتحفظ ✓');
+      });
+  },
+  'edit-item': el => {
+    const i = itemById(el.dataset.item);
+    openModal('تعديل بيانات المسار', itemForm(i), fd => {
+      Object.assign(i, {code: fd.code.trim(), title: fd.title.trim(), en: fd.en.trim(), desc: fd.desc.trim()}); save(); render(); toast('اتحفظ ✓');
+    });
+  },
+  'add-item': el => {
+    const gid = el.dataset.group;
+    openModal('إضافة عنصر جديد', itemForm(), fd => {
+      const id = uid();
+      S.items.push({id, group: gid, code: fd.code.trim(), title: fd.title.trim(), en: fd.en.trim(), desc: fd.desc.trim(), status:'not', target:'', notes:'', links:[], tasks:[]});
+      save(); location.hash = '#/item/' + id; toast('اتضاف ✓');
+    }, 'إضافة');
+  },
+  'del-item': el => {
+    const i = itemById(el.dataset.item);
+    confirmBox('حذف المسار', `هيتحذف <b>${esc(i.code)}</b> بكل مهامه وملاحظاته. متأكدة؟`, () => {
+      S.items = S.items.filter(x => x !== i); save(); location.hash = '#/'; toast('اتحذف');
+    });
+  },
+  'del-link': el => { const i = itemById(el.dataset.item); i.links = i.links.filter(l => l.id !== el.dataset.link); save(); render(); },
+  'export': () => {
+    const blob = new Blob([JSON.stringify(S, null, 2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `hadeer-plan-${today()}.json`; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000); toast('اتحملت النسخة ✓');
+  },
+  'import': () => document.getElementById('importFile').click(),
+  'reset': () => confirmBox('إعادة ضبط', 'هيتمسح كل اللي اتسجل ويرجع للخطة المبدئية. خدي نسخة احتياطية الأول لو محتاجة.', () => { S = seed(); save(); location.hash = '#/'; render(); toast('اترجعت للخطة المبدئية'); }, 'إعادة ضبط'),
+};
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-action]');
+  if(!el) return;
+  const fn = actions[el.dataset.action];
+  if(fn){ e.preventDefault(); fn(el, e); }
+});
+
+document.addEventListener('submit', e => {
+  const f = e.target; if(!f.dataset.form) return;
+  e.preventDefault();
+  const fd = Object.fromEntries(new FormData(f));
+  if(f.dataset.form === 'add-task' || f.dataset.form === 'quick'){
+    const i = itemById(f.dataset.item || fd.item); if(!i || !fd.title.trim()) return;
+    i.tasks.push({id:uid(), title:fd.title.trim(), done:false, due:fd.due||'', prio:fd.prio||'mid', note:'', created:Date.now(), doneAt:null});
+    ui.lastItem = f.dataset.form === 'quick' ? i.id : ui.lastItem;
+    if(f.dataset.form === 'add-task' && ui.taskFilter === 'done') ui.taskFilter = 'open';
+    save(); render(f.dataset.form === 'add-task' ? '.add-task input[name=title]' : 'form[data-form=quick] input[name=title]');
+    toast(`اتضافت لـ ${i.code} ✓`);
+  }
+  if(f.dataset.form === 'add-link'){
+    const i = itemById(f.dataset.item);
+    let url = fd.url.trim(); if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    i.links.push({id:uid(), title:fd.title.trim(), url}); save(); render(); toast('اتضاف ✓');
+  }
+});
+
+document.addEventListener('change', e => {
+  const el = e.target, k = el.dataset.change; if(!k) return;
+  if(k === 'status'){ itemById(el.dataset.item).status = el.value; save(); render(); toast('اتحدثت الحالة'); }
+  if(k === 'target'){ itemById(el.dataset.item).target = el.value; save(); render(); }
+  if(k === 'all-item'){ ui.allItem = el.value; render(); }
+});
+
+let noteTimer;
+document.addEventListener('input', e => {
+  const el = e.target;
+  if(el.dataset.notes){
+    const i = itemById(el.dataset.notes); i.notes = el.value;
+    const m = document.getElementById('savedMsg'); if(m) m.textContent = 'بيتحفظ...';
+    clearTimeout(noteTimer); noteTimer = setTimeout(() => { save(); if(m) m.textContent = 'محفوظ ✓'; }, 500);
+  }
+  if(el.id === 'allQ'){ ui.allQ = el.value; render('#allQ'); }
+});
+
+document.getElementById('importFile').addEventListener('change', e => {
+  const file = e.target.files[0]; if(!file) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try { S = migrate(JSON.parse(r.result)); save(); location.hash = '#/'; render(); toast('اترجعت البيانات ✓'); }
+    catch(err){ toast('الملف ده مش نسخة صحيحة'); }
+    e.target.value = '';
+  };
+  r.readAsText(file);
+});
+
+render();
+</script>
+</body>
+</html>
