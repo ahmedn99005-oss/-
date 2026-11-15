@@ -2,7 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="خطة هدير">
 <title>خطة هدير نبيل</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,13 +18,14 @@
   --gold:#d4af37; --gold2:#f0d78a; --gold3:#8c7330; --goldbg:rgba(212,175,55,.10);
   --text:#f2ede2; --muted:#9b958a; --dim:#6e695f; --danger:#e06b5f;
   --r:16px;
+  color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
 body{
   background:radial-gradient(1100px 520px at 0% -10%,rgba(212,175,55,.07),transparent 60%),var(--bg);
   color:var(--text);font-family:Cairo,system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
-  min-height:100vh;line-height:1.6;font-size:15px;
+  min-height:100vh;line-height:1.6;font-size:15px;-webkit-text-size-adjust:100%;
 }
 a{color:inherit;text-decoration:none}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -64,6 +69,9 @@ main{min-width:0;padding:26px 34px 60px}
 .nav .pc{font-size:11.5px;color:var(--muted);direction:ltr}
 .nav a.active .pc{color:var(--gold2)}
 .tag-soon{font-size:10.5px;color:var(--gold3);border:1px solid var(--gold3);border-radius:99px;padding:0 8px;font-weight:600}
+.sync{display:flex;align-items:center;gap:6px;justify-content:center;font-size:11.5px;color:var(--muted);margin-top:10px}
+.sync span{color:var(--gold)}
+.sync-error span,.sync-full span,.sync-offline span{color:var(--danger)}
 .side-foot{margin-top:22px;padding:14px 10px 0;border-top:1px solid var(--line);font-size:11.5px;color:var(--dim);text-align:center}
 
 /* ---------- topbar ---------- */
@@ -199,13 +207,13 @@ textarea.notes{min-height:320px;resize:vertical;line-height:1.9}
 .lrow .d{color:var(--muted);font-size:12.5px;direction:ltr;white-space:nowrap}
 
 /* ---------- modal / toast ---------- */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:100;padding:16px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:100;padding:16px}
 .modal[hidden]{display:none}
 .dialog{width:min(520px,100%);max-height:90vh;overflow:auto;background:linear-gradient(180deg,#17171a,#111113);border:1px solid var(--gold3);border-radius:18px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
 .dialog h3{margin:0 0 16px;color:var(--gold2);font-size:18px}
 .dialog .fs{display:flex;flex-direction:column;gap:12px}
 .dialog .ft{display:flex;gap:8px;justify-content:flex-start;margin-top:20px}
-#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(30px);background:#17150f;border:1px solid var(--gold3);color:var(--gold2);padding:10px 20px;border-radius:12px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;font-weight:600}
+#toast{position:fixed;bottom:calc(22px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(30px);background:#17150f;border:1px solid var(--gold3);color:var(--gold2);padding:10px 20px;border-radius:12px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;font-weight:600}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 .overlay{display:none}
@@ -223,7 +231,9 @@ textarea.notes{min-height:320px;resize:vertical;line-height:1.9}
   body.nav-open aside{transform:none}
   body.nav-open .overlay{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50}
   .hamb{display:grid;place-items:center}
-  main{padding:16px 16px 50px}
+  aside{padding-top:max(22px,env(safe-area-inset-top,0px));padding-bottom:max(18px,env(safe-area-inset-bottom,0px))}
+  main{padding:16px max(16px,env(safe-area-inset-right,0px)) 50px max(16px,env(safe-area-inset-left,0px))}
+  .field,select.field,textarea.field{font-size:16px}
   .h1{font-size:23px}
   .hero{grid-template-columns:minmax(0,1fr)}
   .hero-ctrl{grid-template-columns:1fr 1fr}
@@ -344,10 +354,64 @@ function migrate(d){
   return d;
 }
 
-let S;
-try { const raw = localStorage.getItem(KEY); S = raw ? migrate(JSON.parse(raw)) : seed(); } catch(e){ S = seed(); }
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
-save();
+let S = null;
+try { const raw = localStorage.getItem(KEY); if(raw) S = migrate(JSON.parse(raw)); } catch(e){ S = null; }
+if(!S) S = seed();
+S.updated = S.updated || 0;
+
+/* ---- المزامنة السحابية: بتشتغل لما الصفحة تتفتح من رابط claude.ai ---- */
+const cloud = {doc:null, status:'local', writing:Promise.resolve(), timer:null};
+function writeLocal(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+function save(){
+  S.updated = Date.now(); writeLocal();
+  if(cloud.doc){ clearTimeout(cloud.timer); cloud.timer = setTimeout(pushCloud, 700); setSync('saving'); }
+}
+function pushCloud(){
+  if(!cloud.doc) return;
+  const json = JSON.stringify(S), updated = S.updated;
+  cloud.writing = cloud.writing
+    .then(() => cloud.doc.set({json, updated}))
+    .then(() => setSync('cloud'))
+    .catch(err => setSync(err && err.code === 'quota_exceeded' ? 'full' : 'error'));
+}
+const SYNC = {
+  local:['◌','محفوظ على الجهاز ده بس'], connecting:['◌','بيتصل بالسحابة...'],
+  cloud:['☁','متزامن على كل أجهزتك'], saving:['☁','بيحفظ...'],
+  offline:['!','السحابة مش متاحة دلوقتي — محفوظ على الجهاز'],
+  error:['!','الحفظ السحابي فشل — محفوظ على الجهاز'], full:['!','المساحة السحابية امتلأت']
+};
+const syncBadge = () => `<div class="sync sync-${cloud.status}" id="syncState"><span>${SYNC[cloud.status][0]}</span>${SYNC[cloud.status][1]}</div>`;
+function setSync(st){ cloud.status = st; const el = document.getElementById('syncState'); if(el) el.outerHTML = syncBadge(); }
+
+// متعملش render وهي بتكتب في خانة — استنى لما تخلص
+let pendingRender = false;
+const typing = () => { const a = document.activeElement; return !!(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && a.closest('#view')); };
+function safeRender(){ if(typing()){ pendingRender = true; return; } render(); }
+document.addEventListener('focusout', () => setTimeout(() => { if(pendingRender && !typing()){ pendingRender = false; render(); } }, 60));
+
+async function initCloud(){
+  if(!window.claude || typeof window.claude.use !== 'function') return;
+  setSync('connecting');
+  try {
+    const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]);
+    const id = user ? await user.id() : null;
+    if(!db || !id){ setSync('local'); return; }
+    cloud.doc = db.doc('data/users/' + id + '/plan');
+    let waiting = true;
+    const timer = setTimeout(() => { if(waiting) setSync('offline'); }, 10000);
+    cloud.doc.onSnapshot(snap => {
+      const md = snap.metadata;
+      if(!md.fromCache){ waiting = false; clearTimeout(timer); }
+      if(md.hasPendingWrites) return;
+      const d = snap.exists ? snap.data() : null;
+      if(!d){ if(!md.fromCache) pushCloud(); return; }
+      if((d.updated || 0) > S.updated){
+        try { S = migrate(JSON.parse(d.json)); S.updated = d.updated; writeLocal(); safeRender(); } catch(e){}
+      } else if((d.updated || 0) < S.updated && !md.fromCache){ pushCloud(); return; }
+      if(!md.fromCache && cloud.status !== 'saving') setSync('cloud');
+    }, () => { waiting = false; clearTimeout(timer); cloud.doc = null; setSync('error'); });
+  } catch(e){ setSync('local'); }
+}
 
 /* ---------------- مساعدات ---------------- */
 const ui = {itemTab:'tasks', taskFilter:'open', lastItem:null, allItem:'all', allStatus:'open', allQ:''};
@@ -382,24 +446,24 @@ function renderSide(route){
     `<a href="${href}" class="${active?'active':''}"><span class="ic">${ic}</span><span class="nm">${nm}</span>${extra}</a>`;
   let h = `<div class="brand"><div class="mono">HN</div><div><b>Hadeer Nabil</b><small>خطة التطوير الذاتي</small></div></div>
   <nav class="nav">
-    ${a('#/', '◆', 'لوحة التحكم', '', route.name==='dash')}
-    ${a('#/tasks', '✓', 'كل المهام', `<span class="pc">${S.items.flatMap(i=>i.tasks).filter(t=>!t.done).length}</span>`, route.name==='tasks')}`;
+    ${a('#home', '◆', 'لوحة التحكم', '', route.name==='dash')}
+    ${a('#tasks', '✓', 'كل المهام', `<span class="pc">${S.items.flatMap(i=>i.tasks).filter(t=>!t.done).length}</span>`, route.name==='tasks')}`;
   for(const s of S.sections){
     const items = itemsOfSection(s.id);
     h += `<div class="nav-sec"><span>${esc(s.name)}</span>${items.length===0?'<span class="tag-soon">قريباً</span>':''}</div>`;
-    h += a(`#/section/${s.id}`, s.icon, `نظرة عامة — ${esc(s.name)}`, '', route.name==='section' && route.id===s.id);
+    h += a(`#section-${s.id}`, s.icon, `نظرة عامة — ${esc(s.name)}`, '', route.name==='section' && route.id===s.id);
     for(const g of s.groups){
       const gi = itemsOfGroup(g.id);
       if(!gi.length) continue;
       if(s.groups.length > 1 || g.name !== s.name) h += `<div class="nav-grp">${esc(g.name)}</div>`;
       for(const i of gi){
-        h += a(`#/item/${i.id}`, '•', `<span class="ltr">${esc(i.code)}</span> <span style="color:var(--muted);font-size:12.5px">${esc(i.title)}</span>`,
+        h += a(`#item-${i.id}`, '•', `<span class="ltr">${esc(i.code)}</span> <span style="color:var(--muted);font-size:12.5px">${esc(i.title)}</span>`,
           `<span class="pc">${progress(i)}%</span>`, route.name==='item' && route.id===i.id);
       }
     }
   }
-  h += `<div class="nav-sec"><span>الإعدادات</span></div>${a('#/backup','⇅','النسخ الاحتياطي','', route.name==='backup')}
-  </nav><div class="side-foot">صُمّم خصيصاً لـ <span class="en" style="color:var(--gold)">Hadeer Nabil</span></div>`;
+  h += `<div class="nav-sec"><span>الإعدادات</span></div>${a('#backup','⇅','النسخ الاحتياطي','', route.name==='backup')}
+  </nav>${syncBadge()}<div class="side-foot">صُمّم خصيصاً لـ <span class="en" style="color:var(--gold)">Hadeer Nabil</span></div>`;
   document.getElementById('sidebar').innerHTML = h;
 }
 
@@ -443,14 +507,14 @@ function viewDash(){
 
   <div class="two" style="margin-top:16px">
     <div class="card">
-      <div class="sec-head" style="margin:0 0 8px"><h2 class="h2">تركيز الأسبوع</h2><a class="btn sm ghost" href="#/tasks">كل المهام ←</a></div>
+      <div class="sec-head" style="margin:0 0 8px"><h2 class="h2">تركيز الأسبوع</h2><a class="btn sm ghost" href="#tasks">كل المهام ←</a></div>
       ${focus.length ? `<div class="tasks">${focus.map(t => taskRow(t, t.item, true)).join('')}</div>`
         : `<div class="empty"><div class="big">✦</div>مفيش مهام متأخرة أو مستحقة خلال الأسبوع.<br><span style="font-size:13px">حطي مواعيد للمهام عشان تظهر هنا.</span></div>`}
     </div>
     <div class="card">
       <div class="sec-head" style="margin:0 0 8px"><h2 class="h2">المواعيد المستهدفة</h2></div>
       ${targets.length ? targets.map(i => { const d = daysBetween(t0, i.target);
-        return `<a class="lrow" href="#/item/${i.id}"><span class="code" style="font-size:15px;min-width:70px">${esc(i.code)}</span>
+        return `<a class="lrow" href="#item-${i.id}"><span class="code" style="font-size:15px;min-width:70px">${esc(i.code)}</span>
           <span class="grow">${esc(i.title)}</span>
           <span class="chip ${d<0?'late':''}">${d<0?`متأخر ${-d} يوم`:d===0?'النهارده':`باقي ${d} يوم`}</span></a>`; }).join('')
         : `<div class="empty"><div class="big">◷</div>لسه مفيش تاريخ مستهدف لأي مسار.<br><span style="font-size:13px">افتحي أي شهادة أو برنامج وحددي تاريخ الهدف.</span></div>`}
@@ -466,7 +530,7 @@ function viewDash(){
     }
     if(!itemsOfSection(s.id).length){
       h += `<div class="sec-head"><h2 class="h2">${esc(s.name)}</h2><span class="tag-soon">قريباً</span></div>
-      <a class="card" href="#/section/${s.id}" style="display:block;color:var(--muted)">القسم ده هنبنيه مع بعض قريباً — اضغطي هنا لو حابة تضيفي أول عنصر.</a>`;
+      <a class="card" href="#section-${s.id}" style="display:block;color:var(--muted)">القسم ده هنبنيه مع بعض قريباً — اضغطي هنا لو حابة تضيفي أول عنصر.</a>`;
     }
   }
   return h;
@@ -474,7 +538,7 @@ function viewDash(){
 
 function itemCard(i){
   const p = progress(i), d = i.tasks.filter(t=>t.done).length;
-  return `<div class="card icard" data-action="go" data-href="#/item/${i.id}">
+  return `<div class="card icard" data-action="go" data-href="#item-${i.id}">
     <div class="top"><span class="code">${esc(i.code)}</span>${statusChip(i.status)}</div>
     <div><div class="tt">${esc(i.title)}</div><div class="en">${esc(i.en)}</div></div>
     ${bar(p)}
@@ -489,7 +553,7 @@ function taskRow(t, item, showItem=false){
     <div class="body">
       <div class="tt">${esc(t.title)}</div>
       <div class="mt">
-        ${showItem ? `<a class="chip item" href="#/item/${item.id}">${esc(item.code)}</a>` : ''}
+        ${showItem ? `<a class="chip item" href="#item-${item.id}">${esc(item.code)}</a>` : ''}
         <span class="chip pr-${t.prio}">${PRIO[t.prio]}</span>
         ${t.due ? `<span class="chip ${late?'late':''}">${late?'متأخرة · ':''}${fmtShort(t.due)}</span>` : ''}
       </div>
@@ -505,7 +569,7 @@ function taskRow(t, item, showItem=false){
 /* ---------------- صفحة المسار ---------------- */
 function viewItem(id){
   const i = itemById(id);
-  if(!i) return `<div class="card empty"><div class="big">?</div>العنصر ده مش موجود. <a href="#/" style="color:var(--gold2)">ارجعي للوحة التحكم</a></div>`;
+  if(!i) return `<div class="card empty"><div class="big">?</div>العنصر ده مش موجود. <a href="#home" style="color:var(--gold2)">ارجعي للوحة التحكم</a></div>`;
   if(ui.lastItem !== id){ ui.itemTab = 'tasks'; ui.taskFilter = 'open'; }
   ui.lastItem = id;
   const p = progress(i), d = i.tasks.filter(t=>t.done).length;
@@ -623,7 +687,7 @@ function viewTasks(){
 /* ---------------- النسخ الاحتياطي ---------------- */
 function viewBackup(){
   return `<h1 class="h1">النسخ الاحتياطي</h1>
-  <p class="sub">البيانات محفوظة في المتصفح ده بس. خدي نسخة احتياطية بانتظام عشان متضيعش لو اتمسح المتصفح أو غيرتي الجهاز.</p>
+  <p class="sub">${cloud.doc ? 'بياناتك متزامنة على حسابك في claude.ai، وبتظهر على الموبايل والكمبيوتر. النسخة الاحتياطية زيادة أمان.' : 'البيانات محفوظة في المتصفح ده بس. خدي نسخة احتياطية بانتظام عشان متضيعش لو اتمسح المتصفح أو غيرتي الجهاز.'}</p>
   <div class="grid-items" style="margin-top:22px">
     <div class="card"><div class="h2">تصدير</div><p class="sub" style="margin:10px 0 14px">تحميل ملف JSON فيه كل المسارات والمهام والملاحظات.</p><button class="btn primary" data-action="export">⇩ تحميل نسخة</button></div>
     <div class="card"><div class="h2">استيراد</div><p class="sub" style="margin:10px 0 14px">استرجاع البيانات من ملف نسخة سابق (هيستبدل البيانات الحالية).</p><button class="btn" data-action="import">⇧ رفع ملف</button></div>
@@ -633,11 +697,12 @@ function viewBackup(){
 
 /* ---------------- التوجيه ---------------- */
 function parseRoute(){
-  const p = (location.hash.replace(/^#\/?/,'') || '').split('/');
-  if(p[0]==='item') return {name:'item', id:p[1]};
-  if(p[0]==='section') return {name:'section', id:p[1]};
-  if(p[0]==='tasks') return {name:'tasks'};
-  if(p[0]==='backup') return {name:'backup'};
+  const h = decodeURIComponent(location.hash.replace(/^#\/?/,''));
+  let m;
+  if((m = h.match(/^item[-\/](.+)$/))) return {name:'item', id:m[1]};
+  if((m = h.match(/^section[-\/](.+)$/))) return {name:'section', id:m[1]};
+  if(h==='tasks') return {name:'tasks'};
+  if(h==='backup') return {name:'backup'};
   return {name:'dash'};
 }
 
@@ -645,7 +710,7 @@ function render(focusSel){
   const r = parseRoute();
   renderSide(r);
   const crumbs = document.getElementById('crumbs');
-  let html = '', c = '<a href="#/">الرئيسية</a>';
+  let html = '', c = '<a href="#home">الرئيسية</a>';
   if(r.name==='item'){ const i = itemById(r.id); const g = i ? groupOf(i.group) : {};
     html = viewItem(r.id); c += i ? ` › <bdi>${esc(g.sec?.name||'')}</bdi> › <bdi>${esc(g.grp?.name||'')}</bdi> › <b><bdi>${esc(i.code)}</bdi></b>` : ''; }
   else if(r.name==='section'){ html = viewSection(r.id); const s = S.sections.find(x=>x.id===r.id); c += ` › <b>${esc(s?.name||'')}</b>`; }
@@ -734,24 +799,33 @@ const actions = {
     openModal('إضافة عنصر جديد', itemForm(), fd => {
       const id = uid();
       S.items.push({id, group: gid, code: fd.code.trim(), title: fd.title.trim(), en: fd.en.trim(), desc: fd.desc.trim(), status:'not', target:'', notes:'', links:[], tasks:[]});
-      save(); location.hash = '#/item/' + id; toast('اتضاف ✓');
+      save(); location.hash = '#item-' + id; toast('اتضاف ✓');
     }, 'إضافة');
   },
   'del-item': el => {
     const i = itemById(el.dataset.item);
     confirmBox('حذف المسار', `هيتحذف <b>${esc(i.code)}</b> بكل مهامه وملاحظاته. متأكدة؟`, () => {
-      S.items = S.items.filter(x => x !== i); save(); location.hash = '#/'; toast('اتحذف');
+      S.items = S.items.filter(x => x !== i); save(); location.hash = '#home'; toast('اتحذف');
     });
   },
   'del-link': el => { const i = itemById(el.dataset.item); i.links = i.links.filter(l => l.id !== el.dataset.link); save(); render(); },
-  'export': () => {
+  'export': async () => {
+    const data = JSON.stringify(S, null, 2), filename = `hadeer-plan-${today()}.json`;
+    if(window.claude && typeof window.claude.use === 'function'){
+      const dl = await claude.use('downloads').catch(() => null);
+      if(dl){
+        try { await dl.save({filename, data}); toast('اتحملت النسخة ✓'); }
+        catch(e){ if(!e || e.code !== 'declined') toast('التحميل مش متاح هنا'); }
+        return;
+      }
+    }
     const blob = new Blob([JSON.stringify(S, null, 2)], {type:'application/json'});
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
     a.download = `hadeer-plan-${today()}.json`; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000); toast('اتحملت النسخة ✓');
   },
   'import': () => document.getElementById('importFile').click(),
-  'reset': () => confirmBox('إعادة ضبط', 'هيتمسح كل اللي اتسجل ويرجع للخطة المبدئية. خدي نسخة احتياطية الأول لو محتاجة.', () => { S = seed(); save(); location.hash = '#/'; render(); toast('اترجعت للخطة المبدئية'); }, 'إعادة ضبط'),
+  'reset': () => confirmBox('إعادة ضبط', 'هيتمسح كل اللي اتسجل ويرجع للخطة المبدئية. خدي نسخة احتياطية الأول لو محتاجة.', () => { S = seed(); save(); if(cloud.doc){ clearTimeout(cloud.timer); pushCloud(); } location.hash = '#home'; render(); toast('اترجعت للخطة المبدئية'); }, 'إعادة ضبط'),
 };
 
 document.addEventListener('click', e => {
@@ -802,7 +876,7 @@ document.getElementById('importFile').addEventListener('change', e => {
   const file = e.target.files[0]; if(!file) return;
   const r = new FileReader();
   r.onload = () => {
-    try { S = migrate(JSON.parse(r.result)); save(); location.hash = '#/'; render(); toast('اترجعت البيانات ✓'); }
+    try { S = migrate(JSON.parse(r.result)); save(); if(cloud.doc){ clearTimeout(cloud.timer); pushCloud(); } location.hash = '#home'; render(); toast('اترجعت البيانات ✓'); }
     catch(err){ toast('الملف ده مش نسخة صحيحة'); }
     e.target.value = '';
   };
@@ -810,6 +884,7 @@ document.getElementById('importFile').addEventListener('change', e => {
 });
 
 render();
+initCloud();
 </script>
 </body>
 </html>
